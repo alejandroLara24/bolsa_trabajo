@@ -97,11 +97,7 @@ export default {
     };
   },
   mounted() {
-    this.cargarEmpresas();
-    if (this.oferta) {
-      this.edit = true;
-      this.cargarOferta();
-    }
+    this.refreshPage()
   },
   methods: {
     cargarOferta() {
@@ -115,6 +111,14 @@ export default {
         .getAll()
         .then((response) => (this.empresas = response.data))
         .catch((err) => alert(err));
+    },
+    refreshPage() {
+      this.nuevaOferta = {}
+      this.cargarEmpresas();
+      if (this.oferta) {
+        this.edit = true;
+        this.cargarOferta();
+      }
     },
     anyadirOferta() {
       if (this.edit) {
@@ -140,6 +144,9 @@ export default {
     cancelar() {
       this.$router.push(`/empresas`);
     },
+  },
+  watch: {
+    $route: "refreshPage",
   },
 };
 </script>
