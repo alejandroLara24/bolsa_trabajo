@@ -2,7 +2,11 @@
   <div class="m-0 row justify-content-center">
     <div class="col-sm-6 col-md-4 col-lg-4">
       <ValidationObserver v-slot="{ handleSubmit }">
-        <form @reset="cancelar" @submit.prevent="handleSubmit(anyadirOferta)" novalidate>
+        <form
+          @reset="cancelar"
+          @submit.prevent="handleSubmit(anyadirOferta)"
+          novalidate
+        >
           <fieldset>
             <legend>{{ edit ? "Editar" : "Nuevo" }} oferta</legend>
             <!-- Aquí los inputs y botones del form -->
@@ -25,6 +29,7 @@
                 class="form-select"
                 name="empresas"
                 v-model="nuevaOferta.empresa"
+                @change="cargarDatosEmpresa(nuevaOferta.empresa)"
               >
                 <option value="" disabled selected>
                   --- Selecciona empresa ---
@@ -48,7 +53,7 @@
               <input
                 type="text"
                 class="form-control"
-                v-model="nuevaOferta.nombre"
+                v-model.lazy="nuevaOferta.nombre"
                 name="Nombre"
                 required
               />
@@ -96,10 +101,7 @@
               />
               <span class="error">{{ errors[0] }}</span>
             </ValidationProvider>
-            <button
-              type="submit"
-              class="btn btn-default btn-primary"
-            >
+            <button type="submit" class="btn btn-default btn-primary">
               {{ edit ? "Editar" : "Añadir" }}
             </button>
             <button type="reset" class="btn btn-danger">Cancelar</button>
@@ -189,7 +191,7 @@ export default {
           .create(this.nuevaOferta)
           .then(() => {
             alert("Se añadio el producto");
-            this.newProduct = {};
+            this.nuevaOferta = {};
             this.$router.push("/");
           })
           .catch((err) => alert(err));
@@ -197,6 +199,13 @@ export default {
     },
     cancelar() {
       this.$router.push(`/empresas`);
+    },
+    cargarDatosEmpresa(empresaId) {
+      if (this.nuevaOferta.empresa == empresaId) {
+        let empresa = this.empresas.find((empresa) => empresa.id == empresaId);
+        this.nuevaOferta.contacto = empresa.contacto;
+        this.nuevaOferta.email = empresa.email;
+      }
     },
   },
   watch: {
